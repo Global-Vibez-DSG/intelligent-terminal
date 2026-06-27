@@ -1,0 +1,124 @@
+name: Global Vibez sync dispatch
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to propagate"
+        required: false
+        type: string
+      reason:
+        description: "Why this sync is being triggered"
+        required: false
+        default: "manual"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate-global-vibez-integration.yml
+
+  prepare-targets:
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      targets: ${{ steps.targets.outputs.targets }}
+      dispatch_event: ${{ steps.targets.outputs.dispatch_event }}
+      release_tag: ${{ steps.payload.outputs.release_tag }}
+      sync_reason: ${{ steps.payload.outputs.sync_reason }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build dispatch matrix
+        id: targets
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const map = JSON.parse(fs.readFileSync("integration/ecosystem-map.json", "utf8"));
+          const currentRepo = process.env.GITHUB_REPOSITORY;
+          const targets = map.repos
+            .filter((repo) => repo.syncEnabled && repo.fullName !== currentRepo)
+            .map((repo) => ({
+              fullName: repo.fullName,
+              id: repo.id,
+              syncMode: repo.syncMode || "repository_dispatch",
+              manifestSource: repo.manifestSource || "",
+              websiteSurface: repo.websiteSurface || ""
+            }));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `dispatch_event=${map.organization.syncDispatchEvent}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `targets=${JSON.stringify(targets)}\n`);
+          NODE
+
+      - name: Build sync payload metadata
+        id: payload
+        env:
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+          INPUT_REASON: ${{ inputs.reason }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          RELEASE_VALUE="${RELEASE_TAG:-${INPUT_RELEASE_TAG}}"
+          echo "release_tag=${RELEASE_VALUE}" >> "$GITHUB_OUTPUT"
+          echo "sync_reason=${INPUT_REASON:-release-published}" >> "$GITHUB_OUTPUT"
+
+  dispatch:
+    runs-on: ubuntu-latest
+    needs: prepare-targets
+    if: ${{ needs.prepare-targets.outputs.targets != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.prepare-targets.outputs.targets) }}
+    steps:
+      - name: Ensure sync token is configured
+        env:
+          GLOBAL_VIBEZ_REPO_SYNC_TOKEN: ${{ secrets.GLOBAL_VIBEZ_REPO_SYNC_TOKEN }}
+        run: |
+          if [ -z "$GLOBAL_VIBEZ_REPO_SYNC_TOKEN" ]; then
+            echo "GLOBAL_VIBEZ_REPO_SYNC_TOKEN is required for cross-repo sync dispatch." >&2
+            exit 1
+          fi
+
+      - name: Dispatch sync event
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GLOBAL_VIBEZ_REPO_SYNC_TOKEN }}
+          script: |
+            const [owner, repo] = '${{ matrix.target.fullName }}'.split('/');
+            await github.rest.repos.createDispatchEvent({
+              owner,
+              repo,
+              event_type: '${{ needs.prepare-targets.outputs.dispatch_event }}',
+              client_payload: {
+                source_repo: context.repo.owner + '/' + context.repo.repo,
+                source_sha: context.sha,
+                source_ref: context.ref,
+                release_tag: '${{ needs.prepare-targets.outputs.release_tag }}',
+                reason: '${{ needs.prepare-targets.outputs.sync_reason }}',
+                product_manifest_url: 'https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/product-manifest.json',
+                companion_config_url: 'https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/companion-config.json',
+                target_repo_id: '${{ matrix.target.id }}',
+                target_sync_mode: '${{ matrix.target.syncMode }}',
+                target_manifest_source: '${{ matrix.target.manifestSource }}',
+                target_website_surface: '${{ matrix.target.websiteSurface }}'
+              }
+            });
+
+      - name: Write summary
+        run: |
+          {
+            echo "### Sync dispatched"
+            echo ""
+            echo "- Target: \`${{ matrix.target.fullName }}\`"
+            echo "- Event: \`${{ needs.prepare-targets.outputs.dispatch_event }}\`"
+            echo "- Release tag: \`${{ needs.prepare-targets.outputs.release_tag || 'n/a' }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

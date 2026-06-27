@@ -1,0 +1,43 @@
+name: Validate Global Vibez integration
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/validate-global-vibez-integration.yml"
+      - ".github/workflows/global-vibez-*.yml"
+      - "doc/cross-product-integration.md"
+      - "doc/global-vibez-ecosystem-operations.md"
+      - "integration/**"
+      - "scripts/validate-integration-assets.js"
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/validate-global-vibez-integration.yml"
+      - ".github/workflows/global-vibez-*.yml"
+      - "doc/cross-product-integration.md"
+      - "doc/global-vibez-ecosystem-operations.md"
+      - "integration/**"
+      - "scripts/validate-integration-assets.js"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate integration assets
+        run: node scripts/validate-integration-assets.js

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/product-manifest.schema.json",
+  "schemaVersion": "1.0",
+  "product": {
+    "id": "intelligent-terminal",
+    "name": "Intelligent Terminal",
+    "tagline": "AI-native Windows Terminal — your agents live here.",
+    "description": "Intelligent Terminal is an experimental fork of Windows Terminal with native AI agent integration. Work alongside GitHub Copilot, Claude, Codex, Gemini, or any ACP-compatible agent CLI — all inside the terminal you already use.",
+    "category": "developer-tools",
+    "platform": "Windows",
+    "minWindowsVersion": "10.0.19041.0",
+    "companionWebsite": "https://globalvibezdsg.com",
+    "repositoryUrl": "https://github.com/Global-Vibez-DSG/intelligent-terminal",
+    "issuesUrl": "https://github.com/Global-Vibez-DSG/intelligent-terminal/issues",
+    "releasesUrl": "https://github.com/Global-Vibez-DSG/intelligent-terminal/releases",
+    "docsUrl": "https://github.com/Global-Vibez-DSG/intelligent-terminal/tree/main/doc",
+    "privacyUrl": "https://go.microsoft.com/fwlink/?LinkID=824704",
+    "logoUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-logo.png"
+  },
+  "install": {
+    "store": {
+      "label": "Microsoft Store",
+      "url": "https://apps.microsoft.com/detail/9NMQC2SSJX24",
+      "recommended": true
+    },
+    "winget": {
+      "label": "WinGet",
+      "packageId": "Microsoft.IntelligentTerminal",
+      "command": "winget install --id Microsoft.IntelligentTerminal -e"
+    },
+    "download": {
+      "label": "Direct download",
+      "url": "https://github.com/Global-Vibez-DSG/intelligent-terminal/releases/latest"
+    }
+  },
+  "features": [
+    {
+      "id": "agent-pane",
+      "name": "Agent Pane",
+      "description": "A context-aware, docked pane with your agent CLI of choice. The pane has context on your shell output across all your shells.",
+      "shortcut": "Ctrl+Shift+.",
+      "imageUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-agent-pane.png"
+    },
+    {
+      "id": "autofix",
+      "name": "Error Detection & Autofix",
+      "description": "When a command fails, an indicator appears in the agent status bar. The agent can explain what happened and suggest or run a fix automatically.",
+      "shortcut": "Ctrl+Alt+.",
+      "imageUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-error-detection.png"
+    },
+    {
+      "id": "command-palette",
+      "name": "Command Palette Agent",
+      "description": "Type ? followed by your prompt in the Command Palette to kick off an agent task. Intelligent Terminal injects context from the active pane.",
+      "shortcut": "Alt+Shift+/",
+      "imageUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-command-palette.png"
+    },
+    {
+      "id": "agent-management",
+      "name": "Agent Management",
+      "description": "View all active agents, their status, and past sessions. Pick up a workflow where you left off or check on a long-running task.",
+      "shortcut": "Ctrl+Shift+/",
+      "imageUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-agent-management.png"
+    },
+    {
+      "id": "status-bar",
+      "name": "Agent Status Bar",
+      "description": "A persistent, minimal control surface at the bottom of every window so you are never more than one click away from your agents.",
+      "imageUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/images/intelligent-terminal-status-bar.png"
+    },
+    {
+      "id": "wtcli",
+      "name": "wtcli Automation",
+      "description": "A tmux-style CLI (wtcli / wta) that lets agents and scripts control Terminal windows, tabs, and panes over a COM protocol — no GUI required.",
+      "docsUrl": "https://github.com/Global-Vibez-DSG/intelligent-terminal/blob/main/doc/wtcli-commands.md"
+    }
+  ],
+  "supportedAgents": [
+    {
+      "id": "copilot",
+      "name": "GitHub Copilot",
+      "description": "Default agent. Set up automatically on first launch.",
+      "url": "https://github.com/features/copilot/cli/",
+      "builtIn": true
+    },
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "description": "Anthropic's Claude via an ACP wrapper. Bring your own subscription.",
+      "url": "https://claude.ai/code",
+      "builtIn": true
+    },
+    {
+      "id": "codex",
+      "name": "OpenAI Codex",
+      "description": "OpenAI Codex CLI via an ACP wrapper. Bring your own subscription.",
+      "url": "https://openai.com/codex",
+      "builtIn": true
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini CLI",
+      "description": "Google Gemini CLI. Speaks ACP natively — no wrapper needed.",
+      "url": "https://ai.google.dev/gemini-api/docs/gemini-cli",
+      "builtIn": true
+    },
+    {
+      "id": "custom",
+      "name": "Any ACP-compatible agent",
+      "description": "Any agent CLI that implements the Agent Client Protocol (ACP) works out of the box.",
+      "url": "https://agentclientprotocol.com/get-started/agents",
+      "builtIn": false
+    }
+  ],
+  "shortcuts": [
+    { "keys": "Ctrl+Shift+.", "action": "Toggle agent pane" },
+    { "keys": "Ctrl+Shift+I", "action": "Switch focus to/from agent pane" },
+    { "keys": "Ctrl+Alt+.", "action": "Open agent pane with error context" },
+    { "keys": "Ctrl+Shift+/", "action": "Open agent management" },
+    { "keys": "Alt+Shift+/", "action": "Open Command Palette in prompt mode" },
+    { "keys": "Alt+Shift+B", "action": "Open interactive delegate-agent tab" }
+  ],
+  "systemRequirements": {
+    "os": "Windows 10 2004 (build 19041) or later, including all of Windows 11",
+    "architecture": ["x64", "arm64", "x86"]
+  },
+  "links": {
+    "announcementBlog": "https://devblogs.microsoft.com/commandline/announcing-intelligent-terminal-version-0-1/",
+    "faq": "https://github.com/Global-Vibez-DSG/intelligent-terminal/blob/main/doc/faq.md",
+    "installingDependencies": "https://github.com/Global-Vibez-DSG/intelligent-terminal/blob/main/doc/installing-dependencies.md",
+    "contributing": "https://github.com/Global-Vibez-DSG/intelligent-terminal/blob/main/CONTRIBUTING.md",
+    "changelog": "https://github.com/Global-Vibez-DSG/intelligent-terminal/releases",
+    "acp": "https://agentclientprotocol.com/get-started/agents"
+  },
+  "manifestMeta": {
+    "lastUpdated": "2026-06-27",
+    "maintainedBy": "Global-Vibez-DSG/intelligent-terminal",
+    "consumedBy": "https://globalvibezdsg.com",
+    "rawUrl": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/product-manifest.json",
+    "notes": "This file is the source of truth for product data consumed by the companion website at globalvibezdsg.com. Update version and lastUpdated on each release. The update-manifest.yml workflow handles this automatically on published releases."
+  }
+}

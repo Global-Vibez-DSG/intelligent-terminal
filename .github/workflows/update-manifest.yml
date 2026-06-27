@@ -1,0 +1,58 @@
+name: Update Product Manifest
+
+# Runs on every published release (including pre-releases).
+# Updates product.version and manifestMeta.lastUpdated in
+# integration/product-manifest.json and commits the change back to main,
+# so the companion website at globalvibezdsg.com always has the latest data.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js (for JSON manipulation)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Derive version from release tag
+        id: version
+        run: |
+          # Strip a leading 'v' if present (e.g. v0.8.0.2 -> 0.8.0.2)
+          RAW_TAG="${{ github.event.release.tag_name }}"
+          VERSION="${RAW_TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Update product-manifest.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          DATE: ${{ steps.version.outputs.date }}
+        run: node scripts/update-manifest.js "$VERSION" "$DATE"
+
+      - name: Commit and push updated manifest
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add integration/product-manifest.json
+
+          # Only commit if there is a change (idempotent for re-runs)
+          if git diff --cached --quiet; then
+            echo "No manifest changes to commit."
+          else
+            git commit -m "chore: bump product manifest to ${{ steps.version.outputs.version }}"
+            git push origin main
+          fi

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/ecosystem-map.schema.json",
+  "schemaVersion": "1.0",
+  "organization": {
+    "name": "Global Vibez DSG",
+    "website": "https://globalvibezdsg.com",
+    "defaultBranch": "main",
+    "releaseTagPrefix": "v",
+    "syncDispatchEvent": "global-vibez-sync"
+  },
+  "sharedPolicies": {
+    "branchProtection": {
+      "protectedBranches": ["main"],
+      "requirePullRequest": true,
+      "requireStatusChecks": true,
+      "requireLinearHistory": false
+    },
+    "releaseCadence": {
+      "stableTrigger": "GitHub release published from main",
+      "prereleaseTrigger": "GitHub prerelease published from main",
+      "websiteRefresh": "Immediately after a successful release sync dispatch"
+    },
+    "dependencyUpdates": {
+      "schedule": "weekly",
+      "day": "monday",
+      "timeUtc": "09:00"
+    },
+    "requiredChecks": [
+      "Validate Global Vibez integration",
+      "Global Vibez ecosystem health check"
+    ]
+  },
+  "repos": [
+    {
+      "id": "intelligent-terminal",
+      "fullName": "Global-Vibez-DSG/intelligent-terminal",
+      "defaultBranch": "main",
+      "role": "Desktop product and source of truth for terminal product metadata consumed by the website.",
+      "primaryOwner": "@johnnyh3611-bit",
+      "backupOwners": [],
+      "websiteSurface": "https://globalvibezdsg.com/terminal",
+      "syncEnabled": true,
+      "syncMode": "source",
+      "releaseSource": "https://github.com/Global-Vibez-DSG/intelligent-terminal/releases",
+      "notes": "Publishes the product manifest and dispatches downstream sync events after releases.",
+      "dependsOn": []
+    },
+    {
+      "id": "global-vibez-web",
+      "fullName": "johnnyh3611-bit/global_vibez_dsg1",
+      "defaultBranch": "main",
+      "role": "Companion website and community surface that rebuilds from the terminal product manifest.",
+      "primaryOwner": "@johnnyh3611-bit",
+      "backupOwners": [],
+      "websiteSurface": "https://globalvibezdsg.com",
+      "syncEnabled": true,
+      "syncMode": "repository_dispatch",
+      "manifestSource": "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/product-manifest.json",
+      "notes": "Should listen for the global-vibez-sync repository_dispatch event and rebuild the terminal landing page.",
+      "dependsOn": [
+        "intelligent-terminal"
+      ]
+    }
+  ]
+}
