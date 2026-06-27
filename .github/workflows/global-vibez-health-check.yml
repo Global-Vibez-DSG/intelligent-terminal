@@ -1,0 +1,80 @@
+name: Global Vibez ecosystem health check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate-global-vibez-integration.yml
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Probe manifest and website
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+
+          async function check(url, label) {
+            const response = await fetch(url, { redirect: "follow" });
+            return {
+              label,
+              url,
+              ok: response.ok,
+              status: response.status
+            };
+          }
+
+          async function main() {
+            const manifest = JSON.parse(fs.readFileSync("integration/product-manifest.json", "utf8"));
+            const companion = JSON.parse(fs.readFileSync("integration/companion-config.json", "utf8"));
+            const checks = await Promise.all([
+              check(manifest.manifestMeta.rawUrl, "product manifest"),
+              check(companion.companionWebsite.url, "companion website"),
+              check(companion.links.terminalPage, "terminal landing page")
+            ]);
+
+            const summaryLines = ["### Global Vibez ecosystem health", ""];
+            let failed = false;
+
+            for (const item of checks) {
+              const status = item.ok ? "OK" : "FAIL";
+              summaryLines.push(`- ${status} \`${item.label}\` — ${item.status} — ${item.url}`);
+              if (!item.ok) {
+                failed = true;
+              }
+            }
+
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summaryLines.join("\n")}\n`);
+            fs.writeFileSync("global-vibez-health-report.json", JSON.stringify(checks, null, 2) + "\n");
+
+            if (failed) {
+              process.exitCode = 1;
+            }
+          }
+
+          main().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Upload health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-vibez-health-report
+          path: global-vibez-health-report.json

@@ -57,7 +57,7 @@ Read the [announcement blog post](https://devblogs.microsoft.com/commandline/ann
 - **Explore the community** — connect with other users across Dating · Streaming · Gaming
 - **Get support** — browse docs and file feedback from the web
 
-The website and this repo are kept in sync through a machine-readable product manifest at [`integration/product-manifest.json`](./integration/product-manifest.json). The manifest is updated automatically on every release and consumed by the website at build time — so product data (features, supported agents, install links, screenshots) never goes stale. See [`doc/cross-product-integration.md`](./doc/cross-product-integration.md) for the full integration guide.
+The website and this repo are kept in sync through a machine-readable product manifest at [`integration/product-manifest.json`](./integration/product-manifest.json). The manifest is updated automatically on every release and consumed by the website at build time — so product data (features, supported agents, install links, screenshots) never goes stale. Repo coordination, release sync, and monitoring are documented in [`doc/global-vibez-ecosystem-operations.md`](./doc/global-vibez-ecosystem-operations.md), and the product-level integration guide lives in [`doc/cross-product-integration.md`](./doc/cross-product-integration.md).
 
 ---
 

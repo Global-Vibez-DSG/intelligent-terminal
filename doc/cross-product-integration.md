@@ -2,6 +2,8 @@
 
 This document describes how **Intelligent Terminal** (`Global-Vibez-DSG/intelligent-terminal`) and the **Global Vibez companion website** (`johnnyh3611-bit/global_vibez_dsg1`, deployed at [globalvibezdsg.com](https://globalvibezdsg.com)) work together as two parts of one product story.
 
+For the broader multi-repo operating model, ownership map, sync workflow, and monitoring policy, see [`doc/global-vibez-ecosystem-operations.md`](./global-vibez-ecosystem-operations.md).
+
 ---
 
 ## Product Roles
@@ -43,6 +45,7 @@ The terminal's onboarding docs and help links point back to the website via `int
 | `product-manifest.json` | **Source of truth** for product data: name, description, features, supported agents, install methods, screenshots, shortcuts, and links. Consumed by the website. |
 | `product-manifest.schema.json` | JSON Schema for the manifest. Validates the manifest structure in CI and in editors. |
 | `companion-config.json` | Terminal-side pointer back to the website. Used by onboarding flows and help links within the terminal. |
+| `ecosystem-map.json` | Repo inventory, ownership, branch policy, and cross-repo sync targets for Global Vibez automation. |
 
 ---
 
@@ -150,6 +153,7 @@ When publishing a new Intelligent Terminal release:
 
 - [ ] Tag the release on GitHub — `update-manifest.yml` fires automatically and bumps `product.version`
 - [ ] Verify the manifest is updated on `main` after the workflow completes
+- [ ] Verify `global-vibez-sync.yml` dispatches the ecosystem update successfully
 - [ ] Trigger or await the next website deployment in `global_vibez_dsg1` to pick up the new version
 - [ ] Confirm the website's terminal page shows the new version and any new features
 - [ ] Update `doc/faq.md` if the release resolves known FAQ items
@@ -171,6 +175,7 @@ Runtime integration (for example, the website calling the terminal's COM protoco
 
 - [`README.md`](../README.md) — Intelligent Terminal overview
 - [`doc/faq.md`](faq.md) — Frequently asked questions
+- [`doc/global-vibez-ecosystem-operations.md`](global-vibez-ecosystem-operations.md) — cross-repo governance, sync, and monitoring
 - [`doc/wtcli-commands.md`](wtcli-commands.md) — wtcli automation reference
 - [`doc/installing-dependencies.md`](installing-dependencies.md) — prerequisite install guide
 - [globalvibezdsg.com](https://globalvibezdsg.com) — companion website
