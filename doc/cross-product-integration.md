@@ -97,18 +97,20 @@ The website's next build (triggered separately in `global_vibez_dsg1`) fetches t
 
 ## How the Website Consumes the Manifest
 
-In `global_vibez_dsg1`, fetch the manifest at **build time** using Next.js static data fetching:
+In `global_vibez_dsg1`, fetch the manifest at **build time**. The example below uses Next.js (which is the framework used by `global_vibez_dsg1`) with Incremental Static Regeneration:
 
 ```typescript
-// src/app/terminal/page.tsx (example — implement in global_vibez_dsg1)
+// src/app/terminal/page.tsx (implement in global_vibez_dsg1)
+// Framework: Next.js 16 with App Router and ISR
 import type { ProductManifest } from "@/types/product-manifest";
 
 const MANIFEST_URL =
   "https://raw.githubusercontent.com/Global-Vibez-DSG/intelligent-terminal/main/integration/product-manifest.json";
 
 export default async function TerminalPage() {
+  // Revalidate once per hour so the page stays current without a full redeploy
   const manifest: ProductManifest = await fetch(MANIFEST_URL, {
-    next: { revalidate: 3600 }, // revalidate every hour (ISR)
+    next: { revalidate: 3600 },
   }).then((r) => r.json());
 
   return (

@@ -40,18 +40,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           DATE: ${{ steps.version.outputs.date }}
-        run: |
-          node - <<'EOF'
-          const fs = require("fs");
-          const path = "integration/product-manifest.json";
-          const manifest = JSON.parse(fs.readFileSync(path, "utf8"));
-
-          manifest.product.version = process.env.VERSION;
-          manifest.manifestMeta.lastUpdated = process.env.DATE;
-
-          fs.writeFileSync(path, JSON.stringify(manifest, null, 2) + "\n");
-          console.log(`Updated manifest: version=${process.env.VERSION}, lastUpdated=${process.env.DATE}`);
-          EOF
+        run: node scripts/update-manifest.js "$VERSION" "$DATE"
 
       - name: Commit and push updated manifest
         run: |
