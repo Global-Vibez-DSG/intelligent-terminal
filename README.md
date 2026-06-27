@@ -10,6 +10,7 @@
   <summary><strong>Table of Contents</strong></summary>
 
 - [What is Intelligent Terminal?](#what-is-intelligent-terminal)
+- [Companion Website](#companion-website)
 - [Installing and running Intelligent Terminal](#installing-and-running-intelligent-terminal)
   - [Microsoft Store](#microsoft-store-recommended)
   - [WinGet](#winget)
@@ -45,6 +46,18 @@ Intelligent Terminal works with any [Agent Client Protocol (ACP)-compatible](htt
 Intelligent Terminal takes all the features you love in Windows Terminal such as:  tabs, profiles, themes, settings, shells, and keyboard shortcuts, which all work the way you expect.
 
 Read the [announcement blog post](https://devblogs.microsoft.com/commandline/announcing-intelligent-terminal-version-0-1/) for more details.
+
+---
+
+## Companion Website
+
+**[globalvibezdsg.com](https://globalvibezdsg.com)** is the companion web platform for Global Vibez DSG — the community and social experience that powers this project. Visit it to:
+
+- **Discover & download** — find install instructions, release notes, and changelogs
+- **Explore the community** — connect with other users across Dating · Streaming · Gaming
+- **Get support** — browse docs and file feedback from the web
+
+The website and this repo are kept in sync through a machine-readable product manifest at [`integration/product-manifest.json`](./integration/product-manifest.json). The manifest is updated automatically on every release and consumed by the website at build time — so product data (features, supported agents, install links, screenshots) never goes stale. See [`doc/cross-product-integration.md`](./doc/cross-product-integration.md) for the full integration guide.
 
 ---
 

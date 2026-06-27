@@ -1,0 +1,20 @@
+{
+  "companionWebsite": {
+    "name": "Global Vibez",
+    "url": "https://globalvibezdsg.com",
+    "description": "The companion web platform for Global Vibez DSG — Dating · Streaming · Gaming, on-chain.",
+    "repo": "https://github.com/johnnyh3611-bit/global_vibez_dsg1",
+    "manifestConsumerUrl": "https://globalvibezdsg.com/terminal"
+  },
+  "links": {
+    "terminalPage": "https://globalvibezdsg.com/terminal",
+    "supportPage": "https://globalvibezdsg.com/support",
+    "communityPage": "https://globalvibezdsg.com",
+    "downloadPage": "https://globalvibezdsg.com/terminal#install"
+  },
+  "crossProductJourney": {
+    "web_to_terminal": "Users discover Intelligent Terminal on globalvibezdsg.com, learn about its features, and follow install steps to get the desktop app.",
+    "terminal_to_web": "Intelligent Terminal error messages, onboarding flows, and release notes link back to globalvibezdsg.com for community, docs, and support."
+  },
+  "notes": "This file is the terminal-side pointer to the companion website. It is consumed by the terminal's onboarding flow and help links to ensure users can always find the website. Update 'links' URLs when the website's routing changes."
+}
